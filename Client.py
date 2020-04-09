@@ -153,9 +153,9 @@ class Client:
 			self.stspSeq+=1
 			
 			# Write the RTSP request to be sent.
-			request = "%s %s %s\n" % (self.SETUP_STR, self.fileName, self.RTSP_VER)
+			request = "SETUP %s RTSP/1.0\n" % self.fileName
 			request += "CSeq: %d \n" % self.rtspSeq
-			request += "Transport: %s; Client Port = %d" % (self.TRANSPORT, self.rtpPort)
+			request += "Transport: RTP/UDP; Client Port = %d \n" % self.rtpPort
 			
 			# Keep track of the sent request.
 			self.requestSent = self.SETUP
@@ -166,9 +166,9 @@ class Client:
 			self.rtspSeq+=1
 			
 			# Write the RTSP request to be sent.
-			request = "%s %s %s \n" % (self.SETUP_STR, self.fileName, self.RTSP_VER)
+			request = "REQUEST %s RTSP/1.0\n" % self.fileName
 			request += "CSeq: %d \n" % self.rtspSeq
-			request += "Session: %d" = % (self.sessionID)
+			request += "Session: %d \n" % self.sessionID
 			
 			# Keep track of the sent request.
 			self.requestSent = self.PLAY
@@ -178,9 +178,9 @@ class Client:
 			self.rtspSeq+=1
 			
 			# Write the RTSP request to be sent.
-			request = "%s %s %s\n" % (self.SETUP_STR, self.fileName, self.RTSP_VER)
+			request = "REQUEST %s RTSP/1.0\n" % self.fileName
 			request += "CSeq: %d \n" % self.rtspSeq
-			request += "Session: %d" = % (self.sessionID)
+			request += "Session: %d \n" % self.sessionID
 			
 			# Keep track of the sent request.
 			self.requestSent = slef.PAUSE
@@ -191,9 +191,9 @@ class Client:
 			self.rtspSeq+=1
 			
 			# Write the RTSP request to be sent.
-			request = "%s %s %s\n" % (self.SETUP_STR, self.fileName, self.RTSP_VER)
+			request = "REQUEST %s RTSP/1.0\n" % self.fileName
 			request += "CSeq: %d \n" % self.rtspSeq
-			request += "Session: %d" = % (self.sessionID)
+			request += "Session: %d \n" % self.sessionID
 			
 			# Keep track of the sent request.
 			self.requestSent = TEARDOWN
@@ -201,7 +201,7 @@ class Client:
 			return
 		
 		# Send the RTSP request using rtspSocket.
-		self.rtspSocket.send(request)
+		self.rtspSocket.sendall(request.encode('utf-8'))
 		
 		print('\nData sent:\n' + request)
 	
@@ -267,7 +267,7 @@ class Client:
 		self.rtpSocket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 		#DGRAM for UDP
 		# Set the timeout value of the socket to 0.5sec
-		self.rtpSocet.settimeout(.5)
+		self.rtpSocket.settimeout(.5)
 		
 		
 		try:
