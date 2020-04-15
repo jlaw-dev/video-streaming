@@ -166,7 +166,7 @@ class Client:
 			self.rtspSeq+=1
 			
 			# Write the RTSP request to be sent.
-			request = "REQUEST %s RTSP/1.0" % self.fileName
+			request = "PLAY %s RTSP/1.0" % self.fileName
             		request += "\nCSeq: %d" % self.rtspSeq
             		request += "\nSession: %d" % self.sessionId
 			
@@ -178,7 +178,7 @@ class Client:
 			self.rtspSeq+=1
 			
 			# Write the RTSP request to be sent.
-			request = "PLAY %s RTSP/1.0" % self.fileName
+			request = "PAUSE %s RTSP/1.0" % self.fileName
            		request += "\nCSeq: %d" % self.rtspSeq
             		request += "\nSession: %d" % self.sessionId
 			
