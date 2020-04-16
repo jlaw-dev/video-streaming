@@ -15,7 +15,16 @@ class RtpPacket:
 
 		# Fill the header bytearray with RTP header fields
 		# Set version
-		header[0] = header[0] | version << 7
+		header[0] = header[0] | version << 6
+
+		# Set padding
+		header[0] = header[0] | padding << 5
+
+		# Set extension
+		header[0] = header[0] | extension << 4
+
+		# Set number of contributing sources
+		header[0] = header[0] | cc << 3
 
 		# Set payload type
 		header[1] = pt & 0xFF
@@ -38,6 +47,9 @@ class RtpPacket:
 		header[9] = (ssrc >> 16) & 0xFF
 		header[10] = (ssrc >> 8) & 0xFF
 		header[11] = ssrc & 0xFF
+
+		# Set the header
+		self.header = header
 		
 		# Get the payload from the argument
 		self.payload = payload
