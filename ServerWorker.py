@@ -1,5 +1,5 @@
 from random import randint
-import sys, traceback, threading, socket
+import sys, traceback, threading, socket, random, time
 
 from VideoStream import VideoStream
 from RtpPacket import RtpPacket
@@ -20,9 +20,12 @@ class ServerWorker:
 	CON_ERR_500 = 2
 	
 	clientInfo = {}
+	dataLoss = 0
 	
-	def __init__(self, clientInfo):
+	def __init__(self, clientInfo, dataLoss, jitter):
 		self.clientInfo = clientInfo
+		self.dataLoss = dataLoss
+		self.MAX_JITTER = jitter
 		
 	def run(self):
 		threading.Thread(target=self.recvRtspRequest).start()
@@ -30,7 +33,7 @@ class ServerWorker:
 	def recvRtspRequest(self):
 		"""Receive RTSP request from the client."""
 		connSocket = self.clientInfo['rtspSocket'][0]
-		while True:            
+		while True:
 			data = connSocket.recv(256)
 			if data:
 				print("Data received:\n" + data.decode())
@@ -111,6 +114,9 @@ class ServerWorker:
 	def sendRtp(self):
 		"""Send RTP packets over UDP."""
 		while True:
+			sleepTime = random.randint(1, self.MAX_JITTER)/1000
+			print("sleepTime %f" % sleepTime)
+			time.sleep(sleepTime)
 			self.clientInfo['event'].wait(0.05) 
 			
 			# Stop sending if request is PAUSE or TEARDOWN
@@ -120,10 +126,13 @@ class ServerWorker:
 			data = self.clientInfo['videoStream'].nextFrame()
 			if data: 
 				frameNumber = self.clientInfo['videoStream'].frameNbr()
+				randomInt = random.randint(1, 100)
+
 				try:
 					address = self.clientInfo['rtspSocket'][1][0]
 					port = int(self.clientInfo['rtpPort'])
-					self.clientInfo['rtpSocket'].sendto(self.makeRtp(data, frameNumber),(address,port))
+					if randomInt > self.dataLoss:
+						self.clientInfo['rtpSocket'].sendto(self.makeRtp(data, frameNumber),(address,port))
 				except:
 					print("Connection Error")
 					#print '-'*60
