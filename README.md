@@ -1,5 +1,5 @@
 # Video Streaming Application
-## A client-server application that uses RTP/RTSP protocol to stream a video file, as well as simualates jitter and packet-loss and calculates statistics about the process
+## A client-server application that uses RTP/RTSP protocol to stream a video file, as well as simualates jitter and packet loss and calculates statistics about the process
 ### Running the application
 To run, start the server with the command
 
