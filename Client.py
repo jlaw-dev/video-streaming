@@ -21,10 +21,13 @@ class Client:
     TEARDOWN = 3
 
     # Initiation..
-    def __init__(self, master, serveraddr, serverport, rtpport, filename):
+    def __init__(self, master, serveraddr, serverport, rtpport, filename, has3Button):
         self.master = master
         self.master.protocol("WM_DELETE_WINDOW", self.handler)
-        self.createWidgets()
+        if(has3Button):
+            self.create3ButtonInterface()
+        else:
+            self.createWidgets()
         self.serverAddr = serveraddr
         self.serverPort = int(serverport)
         self.rtpPort = int(rtpport)
@@ -34,6 +37,8 @@ class Client:
         self.requestSent = -1
         self.teardownAcked = 0
         self.connectToServer()
+        if(has3Button):
+            self.setupMovie()
         self.frameNbr = 0
 
         # statistical data
@@ -71,6 +76,29 @@ class Client:
         # Create Teardown button
         self.teardown = Button(self.master, width=20, padx=3, pady=3)
         self.teardown["text"] = "Teardown"
+        self.teardown["command"] = self.exitClient
+        self.teardown.grid(row=1, column=3, padx=2, pady=2)
+
+        # Create a label to display the movie
+        self.label = Label(self.master, height=19)
+        self.label.grid(row=0, column=0, columnspan=4, sticky=W + E + N + S, padx=5, pady=5)
+
+    def create3ButtonInterface(self):
+        # Create Play button
+        self.start = Button(self.master, width=20, padx=3, pady=3)
+        self.start["text"] = "Play"
+        self.start["command"] = self.playMovie
+        self.start.grid(row=1, column=1, padx=2, pady=2)
+
+        # Create Pause button
+        self.pause = Button(self.master, width=20, padx=3, pady=3)
+        self.pause["text"] = "Pause"
+        self.pause["command"] = self.pauseMovie
+        self.pause.grid(row=1, column=2, padx=2, pady=2)
+
+        # Create Stop button
+        self.teardown = Button(self.master, width=20, padx=3, pady=3)
+        self.teardown["text"] = "Stop"
         self.teardown["command"] = self.exitClient
         self.teardown.grid(row=1, column=3, padx=2, pady=2)
 
