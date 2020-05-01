@@ -1,12 +1,20 @@
 # video-streaming
 A video streaming Client Server application using RTP/RTSP
 
+## Running the application
 To run, start the server with the command
-py -3 Server.py server_port packet_loss jitter
-whre server_port is the port the server listens to for incoming RTSP, packet_loss is the packet loss percent
-and jitter is the ammount of jitter in milliseconds.
+
+`py -3 Server.py server_port packet_loss jitter`
+- `server_port`: the port the server listens to for incoming RTSP (greater than 1024)
+- `packet_loss`: the percentage of packets dropped by the server during transmission
+- `jitter`: the amount of jitter in milliseconds
+
 
 Start the client with the command
-py -3 ClientLauncher.py server_host server_port RTP_port video_file -4
-where server_host is the name of the server, server_port is the port where the server listens on,
-RTP_port is the port where RTP packets are recieved and video_file is the name of the video file.
+
+`py -3 ClientLauncher.py server_host server_port RTP_port video_file Has_3_button_interface`
+- `server_host`: the name of the server
+- `server_port`: the port where the server is listening
+- `RTP_port`: the port where RTP packets are received
+- `video_file`: the name of the video file
+- `Has_3_button_interface`: (`true`/`false`) whether to initialize GUI with 3-Button interface
