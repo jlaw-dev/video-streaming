@@ -4,12 +4,12 @@
 To run, start the server with the command:
 
   Usage:
-    `Server.py server_port packet_loss jitter`
+    `Server.py [--help] [--packet_loss LOSS] [--jitter JITTER] server_port packet_loss jitter`
 - Positional arguments
   - `server_port`: the port the server listens to for incoming RTSP (greater than 1024)
 - Optional arguemnts
-  - `packet_loss`: the percentage of packets dropped by the server during transmission
-  - `jitter`: the amount of jitter in milliseconds
+  - `--packet_loss`, `-l`: the percentage of packets dropped by the server during transmission
+  - `--jitter`, `-j`: the amount of jitter in milliseconds
 
 
 Start the client with the command:
