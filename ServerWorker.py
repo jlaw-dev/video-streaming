@@ -114,9 +114,10 @@ class ServerWorker:
 	def sendRtp(self):
 		"""Send RTP packets over UDP."""
 		while True:
-			sleepTime = random.randint(1, self.MAX_JITTER)/1000
-			print("sleepTime %f" % sleepTime)
-			time.sleep(sleepTime)
+			if (self.MAX_JITTER > 0):
+				sleepTime = random.randint(1, self.MAX_JITTER) / 1000
+				time.sleep(sleepTime)
+
 			self.clientInfo['event'].wait(0.05) 
 			
 			# Stop sending if request is PAUSE or TEARDOWN
