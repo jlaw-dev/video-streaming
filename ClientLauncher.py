@@ -15,7 +15,6 @@ if __name__ == "__main__":
                 parser.add_argument('--interface', '-i', action='store_true', help="indicates whether to start client w/ 3-Button interface")
 
                 args = parser.parse_args()
-                print(args)
 
         except:
                 print("Unable to parse command line arguments.\n")        
