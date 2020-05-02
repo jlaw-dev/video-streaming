@@ -85,7 +85,3 @@ class RtpPacket:
 	def getPacket(self):
 		"""Return RTP packet."""
 		return self.header + self.payload
-	
-	def getSize(self):
-		"""Return size of the payload and header"""
-		return len(self.header)+len(self.payload)
