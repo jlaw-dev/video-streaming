@@ -48,7 +48,7 @@ class Client:
         self.bytes = 0
         self.packets = 0
         self.packetsLost = 0
-        self.lastSequence = -1
+        self.lastSequence = 0
         self.totalJitter = 0
         self.arrivalTimeofPreviousPacket = 0
         self.lastPacketSpacing = 0
@@ -141,10 +141,10 @@ class Client:
                     rtpPacket.decode(data)
 
                     currFrameNbr = rtpPacket.seqNum()
-                    arrivalTimeOfPacket = time.time()
+                    arrivalTimeOfPacket = time.perf_counter()
                     print("Current Seq Num: " + str(currFrameNbr))
 
-                    self.bytes += rtpPacket.getSize()
+                    self.bytes += len(rtpPacket.getPacket())
 
                     if currFrameNbr > self.frameNbr:  # Discard the late packet
                         self.frameNbr = currFrameNbr
@@ -153,7 +153,7 @@ class Client:
                         self.packets += 1
                         self.packetsLost += currFrameNbr - self.lastSequence - 1
 
-                        if currFrameNbr - self.lastSequence - 1 == 0 & currFrameNbr != 1:
+                        if self.lastSequence == currFrameNbr - 1 & currFrameNbr > 1:
                             interPacketSpacing = arrivalTimeOfPacket - self.arrivalTimeofPreviousPacket
                             jitterIncrement = abs(interPacketSpacing-self.lastPacketSpacing)
                             self.totalJitter = self.totalJitter + jitterIncrement
@@ -164,11 +164,13 @@ class Client:
             except:
                 # Stop listening upon requesting PAUSE or TEARDOWN
                 if self.playEvent.isSet():
+                    self.displayStats()
                     break
 
                 # Upon receiving ACK for TEARDOWN request,
                 # close the RTP socket
                 if self.teardownAcked == 1:
+                    self.displayStats()
                     self.rtpSocket.shutdown(socket.SHUT_RDWR)
                     self.rtpSocket.close()
                     break
@@ -270,17 +272,6 @@ class Client:
             if self.requestSent == self.TEARDOWN:
                 self.rtspSocket.shutdown(socket.SHUT_RDWR)
                 self.rtspSocket.close()
-
-                # display statistics
-                totalPackets = ((self.packetsLost-1)/((self.packetsLost-1)+self.packets))*100
-                print("Packets Received: %d packets" % self.packets)
-                print("Packets Lost: %d packets" % (self.packetsLost-1))
-                print("Packet Loss Rate: %d%%" % totalPackets)
-                print("Play time: %.2f seconds" % self.timer)
-                print("Bytes received: %d bytes" % self.bytes)
-                print("Video Data Rate: %d bytes per second" % (self.bytes / self.timer))
-                print("Total Jitter: %.3fms" % (self.totalJitter * 100))
-                print("Average Jitter: %.3fms" % ((self.totalJitter/self.packets)*100))
                 break
 
     def parseRtspReply(self, data):
@@ -309,13 +300,14 @@ class Client:
                     elif self.requestSent == self.PLAY:
                         self.state = self.PLAYING
 
+
                         # start timer if not already playing
                         if self.timerBegin == 0:
                             self.timerBegin = time.perf_counter()
+                            self.arrivalTimeofPreviousPacket = time.perf_counter()
 
                     elif self.requestSent == self.PAUSE:
                         self.state = self.READY
-
                         # set timer when paused and playing previously
                         if self.timerBegin > 0:
                             self.timerEnd = time.perf_counter()
@@ -356,3 +348,15 @@ class Client:
             self.exitClient()
         else:  # When the user presses cancel, resume playing.
             self.playMovie()
+
+    def displayStats(self):
+        totalPackets = ((self.packetsLost) / ((self.packetsLost) + self.packets)) * 100
+        print("Packets Received: %d packets" % self.packets)
+        print("Packets Lost: %d packets" % (self.packetsLost))
+        print("Packet Loss Rate: %d%%" % totalPackets)
+        print("Play time: %.2f seconds" % self.timer)
+        print("Bytes received: %d bytes" % self.bytes)
+        print("Video Data Rate: %d bytes per second" % (self.bytes / self.timer))
+        print("Total Jitter: %.3fms" % (self.totalJitter * 1000))
+        print("Average Jitter: %.3fms" % ((self.totalJitter / self.packets) * 1000))
+
