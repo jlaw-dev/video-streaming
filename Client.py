@@ -153,7 +153,7 @@ class Client:
                         self.packets += 1
                         self.packetsLost += currFrameNbr - self.lastSequence - 1
 
-                        if self.lastSequence == currFrameNbr - 1 & currFrameNbr > 1:
+                        if self.lastSequence == currFrameNbr - 1 and currFrameNbr > 1:
                             interPacketSpacing = arrivalTimeOfPacket - self.arrivalTimeofPreviousPacket
                             jitterIncrement = abs(interPacketSpacing-self.lastPacketSpacing)
                             self.totalJitter = self.totalJitter + jitterIncrement
