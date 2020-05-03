@@ -114,6 +114,7 @@ class ServerWorker:
 	def sendRtp(self):
 		"""Send RTP packets over UDP."""
 		while True:
+			#only implement jitter if MAX_JITTER is not 0
 			if (self.MAX_JITTER > 0):
 				sleepTime = random.randint(1, self.MAX_JITTER) / 1000
 				time.sleep(sleepTime)
@@ -132,6 +133,7 @@ class ServerWorker:
 				try:
 					address = self.clientInfo['rtspSocket'][1][0]
 					port = int(self.clientInfo['rtpPort'])
+					#determines if packet is sent or artificially dropped
 					if randomInt > self.dataLoss:
 						self.clientInfo['rtpSocket'].sendto(self.makeRtp(data, frameNumber),(address,port))
 				except:
