@@ -152,7 +152,7 @@ class Client:
                         #statUpdate
                         self.packets += 1
                         self.packetsLost += currFrameNbr - self.lastSequence - 1
-
+                        #calculate total jitter
                         if self.lastSequence == currFrameNbr - 1 and currFrameNbr > 1:
                             interPacketSpacing = arrivalTimeOfPacket - self.arrivalTimeofPreviousPacket
                             jitterIncrement = abs(interPacketSpacing-self.lastPacketSpacing)
@@ -350,6 +350,7 @@ class Client:
             self.playMovie()
 
     def displayStats(self):
+        """Displays observed statistics"""
         totalPackets = ((self.packetsLost) / ((self.packetsLost) + self.packets)) * 100
         print("Packets Received: %d packets" % self.packets)
         print("Packets Lost: %d packets" % (self.packetsLost))
